@@ -22,12 +22,25 @@
     }
 
     var user = AuthUtils.getUser();
+    $scope.advertisingContent = '';
 
     getGroups();
+    getAdvertising();
     function getGroups() {
       DashboardUtils.getGroups(user)
           .then(function (groups) {
             $scope.groups = groups;
+          }, function (err) {
+            console.log(err);
+
+            alert(err.message);
+          });
+    }
+
+    function getAdvertising() {
+      DashboardUtils.getAdvertising(user)
+          .then(function (advertising) {
+            $scope.advertising = advertising;
           }, function (err) {
             console.log(err);
 
@@ -59,6 +72,18 @@
             })
       }
     };
+
+    $scope.saveAdvertisingContent = function () {
+      DashboardUtils.saveAdvertisingContent($scope.advertisingContent, user.phone)
+          .then(function (ok) {
+            $scope.advertisingContent = '';
+            getAdvertising();
+          }, function (err) {
+            console.log(err);
+
+            alert(err.message);
+          })
+    };
   }
 
   function DashboardUtils($http, $q) {
@@ -85,6 +110,29 @@
         var defer = $q.defer();
 
         $http.put('/api/groups/' + group._id, { group: group })
+            .success(defer.resolve)
+            .error(defer.reject);
+
+        return defer.promise;
+      },
+      getAdvertising: function (author) {
+        var defer = $q.defer();
+
+        $http.get('/api/advertising/' + author.phone)
+            .success(defer.resolve)
+            .error(defer.reject);
+
+        return defer.promise;
+      },
+      saveAdvertisingContent: function (advertising, author) {
+        var defer = $q.defer();
+
+        $http.post('/api/advertising', {
+          data: {
+            advertising: advertising,
+            author: author
+          }
+        })
             .success(defer.resolve)
             .error(defer.reject);
 
