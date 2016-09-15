@@ -1,0 +1,21 @@
+<div ng-controller="DashboardController">
+  <div>
+    <!--constructor-->
+
+  </div>
+  <div>
+    <!--groups-->
+
+    <div ng-if="!groups.length">
+      Group list is empty
+    </div>
+    <button ng-click="addPublic()">Add public</button>
+
+    <div ng-repeat="group in groups track by $index">
+      <input type="checkbox" ng-model="group.hasAdvertising">
+      {{ group.name }}
+    </div>
+
+    <button ng-click="setupPublicGroup()">Setup public</button>
+  </div>
+</div>

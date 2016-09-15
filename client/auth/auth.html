@@ -1,0 +1,18 @@
+<div ng-controller="AuthController">
+  <form name="AuthForm">
+    <label>Phone</label>
+    <input type="text" placeholder="phone" required
+           ng-model="user.phone"/>
+
+    <label>Password</label>
+    <input type="password" placeholder="Password" required
+           ng-model="user.password"/>
+
+    <button type="submit"
+            ng-disabled="AuthForm.$invalid"
+            ng-click="login(user)">login</button>
+    <button type="submit"
+            ng-disabled="AuthForm.$invalid"
+            ng-click="register(user)">register</button>
+  </form>
+</div>
