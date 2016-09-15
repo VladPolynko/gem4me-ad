@@ -18,7 +18,7 @@ router.post('/login', function (request, response) {
 
   User.findOne({ phone: credentials.phone }, function (err, user) {
     if (err) { return response.status(500).send(err); }
-    if (!user) { return response.status(401).json({ message: 'Invalid phone or password1' }); }
+    if (!user) { return response.status(401).json({ message: 'Invalid phone or password' }); }
     if (!isValidPassword(user, credentials.password)) { return response.status(401).json({ message: 'Invalid phone or password' }); }
 
     response.json(user);
