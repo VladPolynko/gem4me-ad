@@ -12,7 +12,8 @@
     'AuthUtils'
   ];
   AuthUtils.$inject = [
-    '$http', '$q'
+    '$http', '$q',
+    '$auth'
   ];
 
   function AuthController($scope, $location,
@@ -28,8 +29,6 @@
             $location.path('/dashboard');
           }, function (err) {
             console.log(err);
-
-            alert(err.message);
           });
     };
 
@@ -39,58 +38,66 @@
             alert('User created');
           }, function (err) {
             console.log(err);
-
-            alert(err.message);
           });
     };
   }
 
-  function AuthUtils($http, $q) {
-    var user = sessionStorage.getItem('user');
-    user = angular.fromJson(user);
-
-    return {
-      login: function (credentials) {
-        var defer = $q.defer();
-
-        $http.post('/api/auth/login', { credentials: credentials })
-            .success(function (ok) {
-              sessionStorage.setItem('user', angular.toJson(ok));
-              user = ok;
-              defer.resolve(user);
-            })
-            .error(defer.reject);
-
-        return defer.promise;
-      },
-      logout: function () {
-        var defer = $q.defer();
-
-        $http.post('/api/auth/logout')
-            .success(function (ok) {
-              sessionStorage.removeItem('user');
-              defer.resolve(ok);
-            })
-            .error(defer.reject);
-
-        return defer.promise;
-      },
-      register:function (credentials) {
-        var defer = $q.defer();
-
-        $http.post('/api/auth/register', { credentials: credentials })
-            .success(defer.resolve)
-            .error(defer.reject);
-
-        return defer.promise;
-      },
-      isAuthorization: function () {
-        return !!user;
-      },
-      getUser: function () {
-        return user;
-      }
+  function AuthUtils($http, $q,
+                     $auth) {
+    var service = {
+      login: login,
+      logout: logout,
+      register: register,
+      isAuthorization: isAuthorization,
+      getUser: getUser
     };
+
+    function login(credentials) {
+      var defer = $q.defer();
+
+      $auth.login({ credentials: credentials })
+          .then(defer.resolve)
+          .catch(defer.reject);
+
+      return defer.promise;
+    }
+
+    function logout() {
+      var defer = $q.defer();
+      $auth.logout();
+
+      $http.get('api/auth/logout')
+          .success(defer.resolve)
+          .error(defer.reject);
+
+      return defer.promise;
+    }
+
+    function register(credentials) {
+      var defer = $q.defer();
+
+      $auth.signup({ credentials: credentials })
+          .then(defer.resolve)
+          .catch(defer.reject);
+
+      return defer.promise;
+    }
+
+    function isAuthorization() {
+      return $auth.isAuthenticated();
+    }
+
+    function getUser() {
+      var defer = $q.defer();
+
+      $http.get('/api/auth/user')
+          .success(defer.resolve)
+          .error(defer.reject);
+
+      return defer.promise;
+    }
+
+    return service;
   }
 
 })();

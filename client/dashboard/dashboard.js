@@ -17,47 +17,41 @@
 
   function DashboardController($scope, $location,
                                AuthUtils, DashboardUtils) {
-    if (!AuthUtils.isAuthorization()) {
-      return $location.path('/auth');
+    init();
+    function init() {
+      if (!AuthUtils.isAuthorization()) {return $location.path('/auth') }
+
+      $scope.advertisingContent = '';
+      getGroups();
+      getAdvertising();
     }
 
-    var user = AuthUtils.getUser();
-    $scope.advertisingContent = '';
-
-    getGroups();
-    getAdvertising();
     function getGroups() {
-      DashboardUtils.getGroups(user)
+      DashboardUtils.getGroups()
           .then(function (groups) {
             $scope.groups = groups;
           }, function (err) {
             console.log(err);
-
-            alert(err.message);
           });
     }
 
     function getAdvertising() {
-      DashboardUtils.getAdvertising(user)
+      DashboardUtils.getAdvertising()
           .then(function (advertising) {
             $scope.advertising = advertising;
           }, function (err) {
             console.log(err);
-
-            alert(err.message);
           });
     }
 
     $scope.addPublic = function () {
       var groupName = prompt('Group name', 'my group');
 
-      DashboardUtils.addGroup({ name: groupName, author: user.phone })
+      DashboardUtils.addGroup({ name: groupName })
           .then(function (ok) {
             getGroups();
           }, function (err) {
             console.log(err);
-
-            alert(err.message);
           });
     };
 
@@ -67,78 +61,82 @@
             .then(function (ok) {
             }, function (err) {
               console.log(err);
-
-              alert(err.message);
             })
       }
     };
 
     $scope.saveAdvertisingContent = function () {
-      DashboardUtils.saveAdvertisingContent($scope.advertisingContent, user.phone)
+      DashboardUtils.saveAdvertisingContent($scope.advertisingContent)
           .then(function (ok) {
             $scope.advertisingContent = '';
             getAdvertising();
           }, function (err) {
             console.log(err);
-
-            alert(err.message);
           })
     };
   }
 
   function DashboardUtils($http, $q) {
-    return {
-      getGroups: function (user) {
-        var defer = $q.defer();
 
-        $http.get('/api/groups/' + user.phone)
-            .success(defer.resolve)
-            .error(defer.reject);
-
-        return defer.promise;
-      },
-      addGroup: function (group) {
-        var defer = $q.defer();
-
-        $http.post('/api/groups', { group: group })
-            .success(defer.resolve)
-            .error(defer.reject);
-
-        return defer.promise;
-      },
-      updateGroup: function (group) {
-        var defer = $q.defer();
-
-        $http.put('/api/groups/' + group._id, { group: group })
-            .success(defer.resolve)
-            .error(defer.reject);
-
-        return defer.promise;
-      },
-      getAdvertising: function (author) {
-        var defer = $q.defer();
-
-        $http.get('/api/advertising/' + author.phone)
-            .success(defer.resolve)
-            .error(defer.reject);
-
-        return defer.promise;
-      },
-      saveAdvertisingContent: function (advertising, author) {
-        var defer = $q.defer();
-
-        $http.post('/api/advertising', {
-          data: {
-            advertising: advertising,
-            author: author
-          }
-        })
-            .success(defer.resolve)
-            .error(defer.reject);
-
-        return defer.promise;
-      }
+    var service = {
+      getGroups: getGroups,
+      addGroup: addGroup,
+      updateGroup: updateGroup,
+      getAdvertising: getAdvertising,
+      saveAdvertisingContent: saveAdvertisingContent
     };
+
+    function getGroups() {
+      var defer = $q.defer();
+
+      $http.get('/api/groups')
+          .success(defer.resolve)
+          .error(defer.reject);
+
+      return defer.promise;
+    }
+
+    function addGroup(group) {
+      var defer = $q.defer();
+
+      $http.post('/api/groups', { group: group })
+          .success(defer.resolve)
+          .error(defer.reject);
+
+      return defer.promise;
+    }
+
+    function updateGroup(group) {
+      var defer = $q.defer();
+
+      $http.put('/api/groups/' + group._id, { group: group })
+          .success(defer.resolve)
+          .error(defer.reject);
+
+      return defer.promise;
+    }
+
+    function getAdvertising() {
+      var defer = $q.defer();
+
+      $http.get('/api/advertising')
+          .success(defer.resolve)
+          .error(defer.reject);
+
+      return defer.promise;
+    }
+
+    function saveAdvertisingContent(advertising) {
+      var defer = $q.defer();
+
+      $http.post('/api/advertising', { advertising: advertising })
+          .success(defer.resolve)
+          .error(defer.reject);
+
+      return defer.promise;
+    }
+
+    return service;
   }
 
 })();

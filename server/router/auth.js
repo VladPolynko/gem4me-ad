@@ -4,6 +4,7 @@ var express = require('express');
 var router = express.Router();
 var config = require('../database/database.config');
 var User = config.user;
+var tokenUtils = require('../utils/tokenUtils.js');
 
 function isValidPassword(user, password) {
   return bCrypt.compareSync(password, user.password);
@@ -21,7 +22,7 @@ router.post('/login', function (request, response) {
     if (!user) { return response.status(401).json({ message: 'Invalid phone or password' }); }
     if (!isValidPassword(user, credentials.password)) { return response.status(401).json({ message: 'Invalid phone or password' }); }
 
-    response.json(user);
+    response.status(200).json({ user: _.omit(user, ['password']), token: tokenUtils.createJWT(user._id) });
   });
 });
 

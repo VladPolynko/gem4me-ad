@@ -3,10 +3,10 @@ var router = express.Router();
 var config = require('../database/database.config');
 var Advertising = config.advertising;
 
-router.get('/:userPhone', function (request, response) {
-  var userPhone = request.params.userPhone;
+router.get('/', function (request, response) {
+  var user = request.user;
 
-  Advertising.find({ author: userPhone }, function (err, advertisingList) {
+  Advertising.find({ author: user._id }, function (err, advertisingList) {
     if (err) { return response.send(err); }
 
     response.json(advertisingList);
@@ -14,12 +14,12 @@ router.get('/:userPhone', function (request, response) {
 });
 
 router.post('/', function (request, response) {
-  var advertising = request.body.data.advertising;
-  var author = request.body.data.author;
+  var advertising = request.body.advertising;
+  var user = request.user;
 
   var newAdvertising = new Advertising();
   newAdvertising.content = advertising;
-  newAdvertising.author = author;
+  newAdvertising.author = user._id;
 
   newAdvertising.save(function (err) {
     if (err) { return response.send(err); }
