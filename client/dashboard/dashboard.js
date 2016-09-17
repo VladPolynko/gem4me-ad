@@ -74,6 +74,15 @@
             console.log(err);
           })
     };
+
+    $scope.logout = function () {
+      AuthUtils.logout()
+          .then(function () {
+            $location.path('/auth')
+          }, function (err) {
+            console.log(err);
+          })
+    }
   }
 
   function DashboardUtils($http, $q) {

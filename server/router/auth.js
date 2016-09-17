@@ -45,4 +45,8 @@ router.post('/register', function (request, response) {
   });
 });
 
+router.post('/logout', function (request, response) {
+  response.end();
+});
+
 module.exports = router;
