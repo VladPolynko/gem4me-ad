@@ -21,6 +21,7 @@
     "lodash": "^4.15.0",
     "moment": "^2.15.0",
     "mongoose": "^4.6.0",
+    "morgan": "^1.7.0",
     "request": "^2.74.0",
     "satellizer": "^0.15.5"
   }
