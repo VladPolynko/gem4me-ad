@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/app.js"
+    "start": "forever start server/app.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "express-jwt": "^5.0.0",
+    "forever": "^0.15.2",
     "jsonwebtoken": "^7.1.9",
     "lodash": "^4.15.0",
     "moment": "^2.15.0",

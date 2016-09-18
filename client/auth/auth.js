@@ -66,7 +66,7 @@
       var defer = $q.defer();
       $auth.logout();
 
-      $http.get('api/auth/logout')
+      $http.post('api/auth/logout')
           .success(defer.resolve)
           .error(defer.reject);
 
