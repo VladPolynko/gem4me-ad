@@ -11,11 +11,16 @@
   "dependencies": {
     "angular": "^1.5.8",
     "angular-route": "^1.5.8",
+    "async": "^2.0.1",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "express-jwt": "^5.0.0",
+    "jsonwebtoken": "^7.1.9",
     "lodash": "^4.15.0",
+    "moment": "^2.15.0",
     "mongoose": "^4.6.0",
-    "request": "^2.74.0"
+    "request": "^2.74.0",
+    "satellizer": "^0.15.5"
   }
 }

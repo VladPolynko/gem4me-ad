@@ -3,10 +3,10 @@ var router = express.Router();
 var config = require('../database/database.config');
 var Group = config.group;
 
-router.get('/:userPhone', function (request, response) {
-  var userPhone = request.params.userPhone;
+router.get('/', function (request, response) {
+  var user = request.user;
 
-  Group.find({ author: userPhone }, function (err, groups) {
+  Group.find({ author: user._id }, function (err, groups) {
     if (err) { return response.send(err); }
 
     response.json(groups)
@@ -15,10 +15,11 @@ router.get('/:userPhone', function (request, response) {
 
 router.post('/', function (request, response) {
   var group = request.body.group;
+  var user = request.user;
 
   var newGroup = new Group();
   newGroup.name = group.name;
-  newGroup.author = group.author;
+  newGroup.author = user._id;
 
   newGroup.save(function (err) {
     if (err) { return response.send(err); }
