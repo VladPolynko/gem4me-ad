@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var configApp = require('../app.config.js');
 var Schema = mongoose.Schema;
 var userSchema = new Schema({
   phone: { type: String, unique: true, required: true },
@@ -14,13 +15,11 @@ var advertisingSchema = new Schema({
   author: { type: String, required: true }
 });
 
-var localDB = 'mongodb://localhost/get4me';
-
 exports.user = mongoose.model('user', userSchema);
 exports.group = mongoose.model('group', groupSchema);
 exports.advertising = mongoose.model('advertising', advertisingSchema);
 exports.connectToDataBase = function () {
   console.log('Server connect 2 database');
 
-  return mongoose.connect(localDB);
+  return mongoose.connect(configApp.DB_CONFIG);
 };
